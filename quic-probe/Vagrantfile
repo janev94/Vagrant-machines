@@ -37,6 +37,7 @@ $RUN_PROBE = <<SCRIPT
 	### J.R. was kind enough to provide us with a working gQUIC server recently so use that to test
 
 	echo 'Running grabber'
+	pwd
 	echo '{"addr": "216.58.207.35:443", "sni": "www.google.de"}' | ./quic-grabber 
 
 SCRIPT
