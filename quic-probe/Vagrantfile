@@ -2,43 +2,10 @@
 # vi: set ft=ruby :
 
 $RUN_PROBE = <<SCRIPT
-	echo 'Resolving dependencies'
-	apt-get install git -y
-	mkdir setup
-	cd setup
-	wget https://dl.google.com/go/go1.11.5.linux-amd64.tar.gz
-	echo 'Setting up Go'
-	tar -C /usr/local -xzf go1.11.5.linux-amd64.tar.gz
-	export PATH=$PATH:/usr/local/go/bin
-	export GOPATH=`go env GOPATH`
-	export GOROOT=`go env GOROOT`
+	src/resolve_deps.sh
+	src/run_grabber.sh
 
-	echo 'Resolving grabber deps'
-	### Get the original quic-go
-	go get github.com/lucas-clemente/quic-go
-	cd $GOPATH/src/github.com/lucas-clemente/quic-go
-
-	### Get the our modifications in quic-go
-	git remote add Eichhoernchen https://github.com/Eichhoernchen/quic-go.git
-	git fetch Eichhoernchen
-	git checkout -b qtracer Eichhoernchen/qtracer
-	cd $GOPATH/src/github.com
-	echo 'Done resolving grabber deps'
-
-	echo 'Setting up grabber'
-	### Get the current quic-grabber
-	mkdir Eichhoernchen
-	cd $GOPATH/src/github.com/Eichhoernchen
-	git clone https://github.com/Eichhoernchen/quic-grabber
-	cd $GOPATH/src/github.com/Eichhoernchen/quic-grabber
-	go build
-	echo 'Done building grabber'
-	### At this point we have the go-grabber binary, so run that
-	### J.R. was kind enough to provide us with a working gQUIC server recently so use that to test
-
-	echo 'Running grabber'
-	pwd
-	echo '{"addr": "216.58.207.35:443", "sni": "www.google.de"}' | ./quic-grabber 
+	
 
 SCRIPT
 
@@ -109,5 +76,7 @@ Vagrant.configure("2") do |config|
   #   apt-get install -y apache2
   # SHELL
 
-	config.vm.provision "shell", privileged: true, inline: $RUN_PROBE
+#	config.vm.provision "shell", privileged: true, inline: $RUN_PROBE
+	config.vm.provision "shell", privileged: true, path: "src/resolve_deps.sh"
+	config.vm.provision "shell", privileged: true, path: "src/run_grabber.sh"
 end
