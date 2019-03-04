@@ -77,6 +77,12 @@ Vagrant.configure("2") do |config|
   # SHELL
 
 #	config.vm.provision "shell", privileged: true, inline: $RUN_PROBE
-	config.vm.provision "shell", privileged: true, path: "src/resolve_deps.sh"
-	config.vm.provision "shell", privileged: true, path: "src/run_grabber.sh"
+	
+	#Make traceroute work
+	config.vm.network "private_network", ip: "192.168.10.15"
+	config.vm.network "public_network"
+	config.vm.provision "shell", run: "always", inline: "/sbin/dhclient -r eth2; /sbin/route del default; /sbin/dhclient eth2"
+
+	#config.vm.provision "shell", privileged: true, path: "src/resolve_deps.sh"
+	#config.vm.provision "shell", privileged: true, path: "src/run_grabber.sh"
 end
