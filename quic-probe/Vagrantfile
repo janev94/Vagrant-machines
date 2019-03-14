@@ -108,7 +108,7 @@ Vagrant.configure("2") do |config|
 	cpus = [cpus, 1].max
 
 	config.vm.provider "virtualbox" do |v|
-	    v.memory = mem
+	    v.memory = mem * 1024 # Size given should be in MB
 	    v.cpus = cpus
 	end
 
