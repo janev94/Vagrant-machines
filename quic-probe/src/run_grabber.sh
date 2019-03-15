@@ -20,7 +20,7 @@ sed -i 's/log.Println("Startup")/\/\/log.Println("Startup")/' main.go
 sed -i 's/log.Println("Shutdown")/\/\/log.Println("Shutdown")/' main.go
 
 ### Make grabber timeout after 600 milliseconds
-sed 's/5 \* time.Second/600 \* time.Millisecond/g' main.go
+sed -i 's/5 \* time.Second/600 \* time.Millisecond/g' main.go
 
 go build
 echo 'Done building grabber'
