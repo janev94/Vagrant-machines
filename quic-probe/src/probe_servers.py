@@ -80,11 +80,11 @@ def main():
 	if len(sys.argv) > 2:
 		outfname = sys.argv[2]
 	if len(sys.argv) > 3:
-		chunk_size = sys.argv[3]
+		chunk_size = int(sys.argv[3])
 	if len(sys.argv) > 4:
-		num_proc = sys.argv[4]
+		num_proc = int(sys.argv[4])
 
-	sys.stdout.write("Running file with: outf={} chunk_size={} num. procs={}".format(outfname, chunk_size, num_proc))
+	sys.stdout.write("Running file with: outf={} chunk_size={} num. procs={}\n".format(outfname, chunk_size, num_proc))
 
 	procs = []
 	if len(sys.argv) > 1:
