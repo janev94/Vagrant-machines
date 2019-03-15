@@ -97,7 +97,7 @@ Vagrant.configure("2") do |config|
 	elsif host =~ /mswin|mingw|cygwin/
 	# Windows code via https://github.com/rdsubhas/vagrant-faster
 	mem = `wmic computersystem Get TotalPhysicalMemory`.split[1].to_i / 1024
-	cpus = `wmic computersystem get numberofprocessors`.split("\n")[2].to_i
+	cpus = `WMIC CPU Get NumberOfLogicalProcessors`.split("\n")[2].to_i
 	end
 
 	# Give VM 1/4 system memory in GBs (at least 1 GB)
