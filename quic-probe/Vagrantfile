@@ -117,7 +117,8 @@ Vagrant.configure("2") do |config|
 	
 	
 	config.vm.provision "file", source: "src/extract_versions.py", destination: "$HOME/src/extract_versions.py"
-	config.vm.provision "file", source: "src/probe_servers", destination: "$HOME/src/probe_servers"
+	config.vm.provision "file", source: "src/probe_servers.py", destination: "$HOME/src/probe_servers.py"
+	config.vm.provision "file", source: "src/Makefile", destination: "$HOME/src/Makefile"
 	
 	config.vm.provision "shell", privileged: true, path: "src/build_probe_deps.sh"
 end
