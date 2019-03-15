@@ -13,6 +13,11 @@ mkdir Eichhoernchen
 cd $GOPATH/src/github.com/Eichhoernchen
 git clone https://github.com/Eichhoernchen/quic-grabber
 cd $GOPATH/src/github.com/Eichhoernchen/quic-grabber
+
+### Make grabber non-verbose
+sed -i 's/log.Println("Startup")/\/\/log.Println("Startup")/' main.go
+sed -i 's/log.Println("Shutdown")/\/\/log.Println("Shutdown")/' main.go
+
 go build
 echo 'Done building grabber'
 ### At this point we have the go-grabber binary, so run that
