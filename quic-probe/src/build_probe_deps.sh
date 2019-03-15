@@ -11,4 +11,7 @@ wget https://gist.githubusercontent.com/janev94/29e9b8c9d20d463be0c43376583626e1
 
 cp /home/vagrant/src/Makefile ./Makefile
 
+# make result folder
+mkdir res
+
 echo 'Done'
