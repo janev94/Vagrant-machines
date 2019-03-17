@@ -10,29 +10,39 @@ import argparse
 
 def processIP(line):
 	loggedResponse = False
+	result = ''
 
-	#print line.strip() + ':443'
-# Need to use shell=True, as we're passing string to call()
-	response = check_output('''echo '{"addr": "%s", "sni": "%s"}' | ./quic-grabber''' % (line.strip() + ':443', 'www.example.org'), shell=True) 
+	tries = 0
+	recv_response = False
+	while(not recv_response and tries < 3):
+		# Try to aquire a non-TO response from the server	
+		response = check_output('''echo '{"addr": "%s", "sni": "%s"}' | ./quic-grabber''' % (line.strip() + ':443', 'www.example.org'), shell=True)
+		if 'HandshakeTimeout' in response:
+			tries += 1
+		else:
+			recv_response = True
+
 	servers = check_output('''echo '%s'  | python extract_versions.py''' % response.strip() , shell=True)
+
 	if servers.strip() == '[]':
-		call('echo "False", >> %s' % outfname, shell=True)
+		result += "False,\n"
 	else:
-		call('echo "True", >> %s' % outfname, shell=True)
+		result += "True,\n"
 
 	#Record supported versons
-	call('echo "%s, " >> %s' % (servers.strip(), outfname), shell=True)
+	result += "%s \n" % servers.strip()
 
 	log_trace = False
 
 	if log_trace:
-		call('echo " %s\n\nTraceroute:\n" >> %s' % (response, outfname), shell=True)
+		result += " %s\n\nTraceroute:\n" % response
+
 		tr = check_output('python tr.py %s' % line.strip(), shell=True)
-		call('echo "%s" >> %s' % (tr, outfname), shell=True)
+		result += "%s\n" % tr
 
-	call('echo "%s" >> %s' % (response, outfname), shell=True)
+	result += "%s\n\n\n================\n\n\n" % response
 
-	call('printf "\n\n\n================\n\n\n" >> %s' % outfname, shell=True)
+	call('echo "%s" >> %s' % (result, outfname), shell=True)
 
 
 from datetime import datetime
