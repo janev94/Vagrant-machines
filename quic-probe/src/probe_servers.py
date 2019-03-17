@@ -9,41 +9,45 @@ import argparse
 #TODO: Spwan multiple processes with popen, check runtime against single run
 
 def processIP(line):
-	loggedResponse = False
-	result = ''
+	try:
+		loggedResponse = False
+		result = ''
 
-	tries = 0
-	recv_response = False
-	while(not recv_response and tries < 3):
-		# Try to aquire a non-TO response from the server	
-		response = check_output('''echo '{"addr": "%s", "sni": "%s"}' | ./quic-grabber''' % (line.strip() + ':443', 'www.example.org'), shell=True)
-		if 'HandshakeTimeout' in response:
-			tries += 1
+		tries = 0
+		recv_response = False
+		while(not recv_response and tries < 3):
+			# Try to aquire a non-TO response from the server	
+			response = check_output('''echo '{"addr": "%s", "sni": "%s"}' | ./quic-grabber''' % (line.strip() + ':443', 'www.example.org'), shell=True)
+			if 'HandshakeTimeout' in response:
+				tries += 1
+			else:
+				recv_response = True
+
+		servers = check_output('''echo '%s'  | python extract_versions.py''' % response.strip() , shell=True)
+
+		if servers.strip() == '[]':
+			result += "False,\n"
 		else:
-			recv_response = True
+			result += "True,\n"
 
-	servers = check_output('''echo '%s'  | python extract_versions.py''' % response.strip() , shell=True)
+		#Record supported versons
+		result += "%s \n" % servers.strip()
 
-	if servers.strip() == '[]':
-		result += "False,\n"
-	else:
-		result += "True,\n"
+		log_trace = False
 
-	#Record supported versons
-	result += "%s \n" % servers.strip()
+		if log_trace:
+			result += " %s\n\nTraceroute:\n" % response
 
-	log_trace = False
+			tr = check_output('python tr.py %s' % line.strip(), shell=True)
+			result += "%s\n" % tr
 
-	if log_trace:
-		result += " %s\n\nTraceroute:\n" % response
+		result += "%s\n\n\n================\n\n\n" % response
 
-		tr = check_output('python tr.py %s' % line.strip(), shell=True)
-		result += "%s\n" % tr
-
-	result += "%s\n\n\n================\n\n\n" % response
-
-	call('echo "%s" >> %s' % (result, outfname), shell=True)
-
+		call('echo "%s" >> %s' % (result, outfname), shell=True)
+	except Exception as e:
+		with open('errors/%s.err' % line) as f:
+			f.write(repr(e))
+		
 
 from datetime import datetime
 from threading import Thread
