@@ -45,7 +45,7 @@ def processIP(line):
 
 		call('echo "%s" >> %s' % (result, outfname), shell=True)
 	except Exception as e:
-		with open('errors/%s.err' % line) as f:
+		with open('errors/%s.err' % line, 'w') as f:
 			f.write(repr(e))
 		
 
