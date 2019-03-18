@@ -13,5 +13,7 @@ cp /home/vagrant/src/Makefile ./Makefile
 
 # make result folder
 mkdir res
+# make errors folder
+mkdir errors
 
 echo 'Done'
